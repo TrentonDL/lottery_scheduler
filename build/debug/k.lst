@@ -1,0 +1,94 @@
+
+build/release/k.elf:     file format elf32-littleriscv
+build/release/k.elf
+architecture: riscv:rv32, flags 0x00000112:
+EXEC_P, HAS_SYMS, D_PAGED
+start address 0x08005000
+
+Program Header:
+    LOAD off    0x00001000 vaddr 0x08005000 paddr 0x08005000 align 2**12
+         filesz 0x000000ac memsz 0x000008b0 flags rwx
+
+Sections:
+Idx Name              Size      VMA       LMA       File off  Algn  Flags
+  0 .text             000000a8  08005000  08005000  00001000  2**3  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .rodata           00000000  080050a8  080050a8  000010b0  2**3  CONTENTS, ALLOC, LOAD, DATA
+  2 .data             00000004  080050a8  080050a8  000010a8  2**3  CONTENTS, ALLOC, LOAD, DATA
+  3 .heap             00000800  080050b0  080050b0  000010ac  2**3  ALLOC
+  4 .riscv.attributes 0000001c  00000000  00000000  000010b0  2**0  CONTENTS, READONLY
+  5 .comment          00000028  00000000  00000000  000010cc  2**0  CONTENTS, READONLY
+SYMBOL TABLE:
+08005000 l    d  .text	00000000 .text
+080050a8 l    d  .rodata	00000000 .rodata
+080050a8 l    d  .data	00000000 .data
+080050b0 l    d  .heap	00000000 .heap
+00000000 l    d  .riscv.attributes	00000000 .riscv.attributes
+00000000 l    d  .comment	00000000 .comment
+00000000 l    df *ABS*	00000000 servers.c
+00000000 l    df *ABS*	00000000 k.c
+0800503c g     F .text	00000038 kill
+00000800 g       *ABS*	00000000 __heap_size
+080050a8 g     O .data	00000004 grass
+08005074 g     F .text	00000034 main
+08005000 g       .text	00000000 _enter
+08008000 g       *ABS*	00000000 __heap_end
+080050b0 g       .heap	00000000 __heap_start
+08005010 g     F .text	0000002c exit
+
+
+
+Disassembly of section .text:
+
+08005000 <_enter>:
+_enter():
+ 8005000:	00052503          	lw	a0,0(a0)
+ 8005004:	80002137          	lui	sp,0x80002
+ 8005008:	06c000ef          	jal	ra,8005074 <main>
+ 800500c:	004000ef          	jal	ra,8005010 <exit>
+
+08005010 <exit>:
+exit():
+ 8005010:	fe010113          	addi	sp,sp,-32 # 80001fe0 <__heap_end+0x77ff9fe0>
+ 8005014:	00112e23          	sw	ra,28(sp)
+ 8005018:	00812c23          	sw	s0,24(sp)
+ 800501c:	02010413          	addi	s0,sp,32
+ 8005020:	fea42623          	sw	a0,-20(s0)
+ 8005024:	080057b7          	lui	a5,0x8005
+ 8005028:	0a87a783          	lw	a5,168(a5) # 80050a8 <grass>
+ 800502c:	0a47a783          	lw	a5,164(a5)
+ 8005030:	fec42503          	lw	a0,-20(s0)
+ 8005034:	000780e7          	jalr	a5
+ 8005038:	0000006f          	j	8005038 <exit+0x28>
+
+0800503c <kill>:
+kill():
+ 800503c:	ff010113          	addi	sp,sp,-16
+ 8005040:	00112623          	sw	ra,12(sp)
+ 8005044:	00812423          	sw	s0,8(sp)
+ 8005048:	01010413          	addi	s0,sp,16
+ 800504c:	080057b7          	lui	a5,0x8005
+ 8005050:	0a87a783          	lw	a5,168(a5) # 80050a8 <grass>
+ 8005054:	08c7a783          	lw	a5,140(a5)
+ 8005058:	000780e7          	jalr	a5
+ 800505c:	00000013          	nop
+ 8005060:	00078513          	mv	a0,a5
+ 8005064:	00c12083          	lw	ra,12(sp)
+ 8005068:	00812403          	lw	s0,8(sp)
+ 800506c:	01010113          	addi	sp,sp,16
+ 8005070:	00008067          	ret
+
+08005074 <main>:
+main():
+ 8005074:	fe010113          	addi	sp,sp,-32
+ 8005078:	00112e23          	sw	ra,28(sp)
+ 800507c:	00812c23          	sw	s0,24(sp)
+ 8005080:	02010413          	addi	s0,sp,32
+ 8005084:	fea42623          	sw	a0,-20(s0)
+ 8005088:	feb42423          	sw	a1,-24(s0)
+ 800508c:	fb1ff0ef          	jal	ra,800503c <kill>
+ 8005090:	00000793          	li	a5,0
+ 8005094:	00078513          	mv	a0,a5
+ 8005098:	01c12083          	lw	ra,28(sp)
+ 800509c:	01812403          	lw	s0,24(sp)
+ 80050a0:	02010113          	addi	sp,sp,32
+ 80050a4:	00008067          	ret
